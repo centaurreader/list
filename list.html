@@ -1,0 +1,230 @@
+<!doctype HTML>
+<html>
+<head>
+<title>List - centaurreader</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+  <style>
+    * { margin: 0; }
+    body {
+      margin: 0 auto;
+      padding: 12px 0;
+      max-width: 1024px;
+      background: #f2f2f2;
+      font-family: 'Source Sans Pro'
+    }
+    .button {
+      display: inline-block;
+      line-height: 30px;
+      background: #9fa3af;
+      padding: 3px;
+      border-radius: 3px;
+      color: #f2f2f2;
+      margin: 0 0 14px 0;
+      font-weight: 300;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    input {
+      border: 0;
+      outline: 0;
+      width: 100%;
+      font-size: 36px;
+      padding: 2px;
+    }
+    .primary-input {
+      border-radius: 3px;
+      padding: 3px 6px;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,0.20);
+    }
+    h2 { 
+      position: relative; 
+      margin-top: 26px;
+    }
+    .section-title {
+      background: transparent;
+      border-bottom: 1px solid #9fa3af;
+    }
+    .list-control-strip {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .note-in-list { 
+      position: relative; 
+      border-bottom: 1px solid #d5d8e1;
+    }
+      .note-in-list-input {
+        background: transparent;
+        font-size: 18px;
+      }
+    .delete-note-button {
+      position: absolute;
+      right: 0;
+      top: 3px;
+
+      font-weight: 600;
+      color: #e44242; 
+
+      cursor: pointer;
+    }
+      .delete-note-button div { display: none; }
+      .delete-note-button:hover div { display: inline-block; }
+  </style>
+</head>
+<body>
+  <section>
+    <div class="button" data-bind="click: addList">Add List</div>
+    <input class="primary-input" id="newNote" type="text" placeholder="Add note..." data-bind="event: { blur: addNote }, value: newNote, valueUpdate: 'keyup'">
+  </section>
+  <!-- ko foreach: lists -->
+  <section>
+    <h2>
+      <input type="text" class="section-title" data-bind="value: name">
+      <div class="list-control-strip">
+        <div class="button" data-bind="click: $root.serializeList">Serialize</div>
+        <div class="button" data-bind="click: $root.clearList">Clear</div>
+        <div class="button" data-bind="click: $root.deleteList">Delete</div>
+      </div>
+    </h2>
+    <ul>
+      <!-- ko foreach: notes -->
+        <li class="note-in-list">
+          <input type="text" class="note-in-list-input" data-bind="value: value, valueUpdate: 'keyup', event: { blur: $root.updateStorage }">
+          <div class="delete-note-button" data-bind="click: $root.deleteNote">
+            <div>Delete from every list</div>
+            <span>X</span>
+          </div>
+        </li>
+      <!-- /ko -->
+    </ul>
+  </section>
+  <!-- /ko -->
+
+  <script>
+    // test for local storage support
+    function lsTest(){
+      var test = 'test';
+      try {
+              localStorage.setItem(test, test);
+              localStorage.removeItem(test);
+              return true;
+          } catch(e) {
+              return false;
+          };
+    };
+    if(lsTest() === true){
+        console.log('yep, has storage.');
+    }else{
+        console.log('no local storage.')
+    };
+
+    function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      };
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+    };
+
+    var NoteModel = function(note, noteFromStorage) {
+      var self = this;
+
+      self.id = noteFromStorage ? noteFromStorage.id : guid();
+      self.value = ko.observable(noteFromStorage ? noteFromStorage.value : note);
+
+      return self;
+    };
+
+    var ListModel = function (notes, list) {
+      var self = this;
+
+      self.id = list ? list.id : guid();
+      self.name = ko.observable(list ? list.name : 'New List');
+      self.nameFix = ko.computed(function () { if(self.name().length === 0) { self.name('...'); }});
+      self.notes = ko.observableArray();
+      if(list) {
+        var notes = [];
+        for(var i = 0, length = list.notes.length; i < length; i++) {
+          var note = list.notes[i];
+          notes.push(new NoteModel(null, note));
+        };
+        self.notes(notes);
+      };
+
+      return self;
+    };
+
+    var vm = function () {
+      var self = this;
+
+      self.lists = ko.observableArray();
+
+      self.newNote = ko.observable();
+
+
+      self.addList = function () { self.lists.push(new ListModel(self.notes)); };
+      self.clearList = function (element) { element.notes.removeAll(); };
+      self.deleteList = function (element) { self.lists.remove(element); };
+      self.serializeList = function (element) { 
+          window.prompt("Copy to clipboard: Ctrl+C, Enter", ko.toJSON(element.notes));
+      };
+
+      self.deleteNote = function (element) { 
+        ko.utils.arrayForEach(self.lists(), function(list) {
+          list.notes.remove(element);
+        });
+      };
+      self.addNote = function () {
+        if(self.newNote()) {
+          if(self.lists()) {
+            if(self.lists().length === 0) {
+              self.addList();
+            };
+          };
+          if(self.newNote().length > 0) {
+            var note = new NoteModel(self.newNote());
+            for(var i = 0, length = self.lists().length; i < length; i++) {
+              self.lists()[i].notes.push(note);
+            };
+            self.newNote(null);
+          };
+        };
+      };
+      document.getElementById('newNote').addEventListener('keypress', keypressInput)
+      function keypressInput(e) {
+          var code = (e.keyCode ? e.keyCode : e.which);
+          if (code == 13) { //Enter keycode
+              e.preventDefault();
+              self.addNote();
+          };
+      };
+      
+
+      // save to local storage on exit
+      self.updateStorage = function () { localStorage.setItem('lists', ko.toJSON(self.lists())); };
+      window.onunload = self.updateStorage;
+
+      // init from local storage
+      var listsFromStorage = JSON.parse(localStorage.getItem('lists'));
+      if(listsFromStorage != null) {
+	      var lists = [];
+	      for(var i = 0, length = listsFromStorage.length; i < length; i++) {
+	        var list = listsFromStorage[i];
+	        lists.push(new ListModel(null, list));
+	      };
+	      self.lists(lists);
+    	}
+
+
+      return self;
+    };
+    ko.applyBindings(new vm());
+  </script>
+</body>
+</html>
