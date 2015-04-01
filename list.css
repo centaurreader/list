@@ -1,0 +1,142 @@
+* { margin: 0; }
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+body {
+  margin: 0 auto;
+  padding: 12px 0;
+  background: #f2f2f2;
+  font-family: 'Source Sans Pro'
+}
+.wrap {
+  margin: 0 auto;
+  max-width: 1024px;
+}
+@media screen and (max-width: 1024px) {
+  .wrap { width: 90%; }
+}
+
+
+.button {
+  display: inline-block;
+  line-height: 30px;
+  background: #9fa3af;
+  padding: 3px;
+  border-radius: 3px;
+  color: #f2f2f2;
+  margin: 0 0 14px 0;
+  font-weight: 300;
+  font-size: 14px;
+  cursor: pointer;
+}
+.button + .button { margin-left: 14px; }
+input {
+  border: 0;
+  outline: 0;
+  width: 100%;
+  font-size: 36px;
+  padding: 2px;
+}
+@media screen and (max-width: 1024px) {
+  input { font-size: 4rem; }
+}
+.add-list {
+  display: inline-block;
+  background: url('add-list.svg');
+  background-size: 100%;
+  width: 30px;
+  height: 30px;
+}
+@media screen and (max-width: 1024px) {
+    .add-list {
+      height: 60px;
+      width: 60px;
+    }
+}
+.primary-input {
+  border-radius: 3px;
+  padding: 3px 6px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.20);
+}
+
+
+h2 { 
+  position: relative; 
+  margin-top: 26px;
+}
+.section-title {
+  background: transparent;
+  border-bottom: 1px solid #9fa3af;
+}
+.list-control-strip {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+@media screen and (max-width: 1024px) {
+  .list-control-strip { top: 24px; }
+}
+.serialize-list {
+  background: url('files-empty.svg');
+  background-size: 100%;
+  width: 30px;
+  height: 30px;
+}
+.clear-list {
+  background: url('clear-list.svg');
+  background-size: 100%;
+  width: 30px;
+  height: 30px; 
+}
+.delete-list {
+  background: url('delete.svg');
+  background-size: 100%;
+  width: 30px;
+  height: 30px;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+.note-in-list { 
+  position: relative; 
+  border-bottom: 1px solid #d5d8e1;
+}
+  .note-in-list-input {
+    background: transparent;
+    font-size: 18px;
+    color: #817D7D;
+  }
+  @media screen and (max-width: 1024px) {
+    .note-in-list-input { 
+      padding: 20px 0;
+      font-size: 3rem; 
+    }
+  }
+.delete-note-button {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-weight: 600;
+  color: #e44242; 
+
+  cursor: pointer;
+}
+  .delete-note-button div { display: none; }
+  .delete-note-button:hover div { display: inline-block; }
+  @media screen and (max-width: 1024px) {
+    .delete-note-button { font-size: 3rem; }
+  }
+.new-note-in-list {
+  box-sizing: border-box;
+  margin-top: 4px;
+  border: 1px dashed #817d7d;
+  border-radius: 2px;
+  padding: 3px;
+  background: transparent;
+  font-size: 24px;
+}
