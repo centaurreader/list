@@ -1,9 +1,4 @@
 * { margin: 0; }
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
 body {
   margin: 0 auto 60px auto;
   padding: 12px 0;
