@@ -25,9 +25,10 @@
           <!-- ko foreach: notes -->
             <li class="note-in-list">
               <input type="text" class="note-in-list-input" data-bind="value: value, valueUpdate: 'keyup', event: { blur: $root.updateStorage }">
-              <div class="delete-note-button" data-bind="click: $root.deleteNote">
-                <div>Delete from every list</div>
-                <span>X</span>
+              <div class="delete-bug">
+                <div class="delete-primary"><div class="delete-list"></div></div>
+                <div class="delete-bug-child delete-bug-child-1" data-bind="click: $root.deleteFromList.bind($data, $parent)">1</div>
+                <div class="delete-bug-child delete-bug-child-2" data-bind="click: $root.deleteNote">*</div>
               </div>
             </li>
           <!-- /ko -->
