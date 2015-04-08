@@ -81,6 +81,7 @@ section:hover .list-control-strip { display: block; }
 .delete-list {
   width: 30px;
   height: 30px;    
+  background-size: 100%;
 }
 @media screen and (max-width: 1024px) {
   .serialize-list,
@@ -88,7 +89,6 @@ section:hover .list-control-strip { display: block; }
   .delete-list {
     height: 20px;
     width: 20px;
-    background-size: 100%;
   }
 }
 ul {
