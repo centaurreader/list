@@ -8,13 +8,13 @@ function lsTest() {
     return true;
   } catch (e) {
     return false;
-  };
-};
+  }
+}
 if (lsTest() === true){
   hasStorage = true;
 }else{
-  alert('Your browser does not support local storage. No data will be saved on exit. Sorry.')
-};
+  alert('Your browser does not support local storage. No data will be saved on exit. Sorry.');
+}
 
 // build guid
 function guid() {
@@ -22,10 +22,10 @@ function guid() {
     return Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
       .substring(1);
-  };
+  }
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
-};
+}
 
 // data models
 var NoteModel = function(note, noteFromStorage) {
@@ -44,13 +44,13 @@ var ListModel = function (notes, list) {
   self.nameFix = ko.computed(function () { if(self.name().length === 0) { self.name('...'); }});
   self.notes = ko.observableArray();
   if (list) {
-    var notes = [];
+    var _notes = [];
     for (var i = 0, length = list.notes.length; i < length; i++) {
       var note = list.notes[i];
-      notes.push(new NoteModel(null, note));
-    };
-    self.notes(notes);
-  };
+      _notes.push(new NoteModel(null, note));
+    }
+    self.notes(_notes);
+  }
 
   self.newNote = ko.observable();
   self.addNote = function (element) {
@@ -58,8 +58,8 @@ var ListModel = function (notes, list) {
       if (self.newNote().length > 0) {
         self.notes.push(new NoteModel(self.newNote()));
         self.newNote(null);
-      };
-    };
+      }
+    }
   };
 
   self.keypressInput = function (element, event) {
@@ -68,7 +68,7 @@ var ListModel = function (notes, list) {
         self.addNote();
       }else { 
         return true; 
-      };
+      }
   };
 
   return self;
@@ -89,8 +89,8 @@ var vm = function () {
     var notes = '';
     for (var i = 0, length = element.notes().length; i < length; i++) {
       notes += element.notes()[i].value();
-      notes += '\r\n'
-    }; 
+      notes += '\r\n';
+    }
     window.prompt("Copy to clipboard: Ctrl+C, Enter", notes);
   };
 
@@ -104,45 +104,45 @@ var vm = function () {
       if (self.lists()) {
         if (self.lists().length === 0) {
           self.addList();
-        };
-      };
+        }
+      }
       if (self.newNote().length > 0) {
         var note = new NoteModel(self.newNote());
         for (var i = 0, length = self.lists().length; i < length; i++) {
           self.lists()[i].notes.push(note);
-        };
+        }
         self.newNote(null);
-      };
-    };
+      }
+    }
   };
-  document.getElementById('newNote').addEventListener('keypress', keypressInput)
+  document.getElementById('newNote').addEventListener('keypress', keypressInput);
   function keypressInput(e) {
       var code = (e.keyCode ? e.keyCode : e.which);
       if (code == 13) { //Enter keycode
           e.preventDefault();
           self.addNote();
-      };
-  };
+      }
+  }
   
 
   // init from local storage
   var loadFromStorage = function () {
     var listsFromStorage = JSON.parse(localStorage.getItem('lists'));
-    if (listsFromStorage != null) {
+    if (listsFromStorage !== null) {
       var lists = [];
       for(var i = 0, length = listsFromStorage.length; i < length; i++) {
         var list = listsFromStorage[i];
         lists.push(new ListModel(null, list));
-      };
+      }
       self.lists(lists);
-  	};
+  	}
   };
   // save to local storage on exit
   self.updateStorage = function () { localStorage.setItem('lists', ko.toJSON(self.lists())); };
   if(hasStorage) {
     loadFromStorage(); // call load
     window.onunload = self.updateStorage;
-  };
+  }
 
 
   return self;

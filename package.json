@@ -1,0 +1,35 @@
+{
+  "name": "list",
+  "version": "1.0.0",
+  "description": "This is a work-in-progress web-based list app I am designing for personal use. The app currently depends on KnockoutJS...someday I will remove that dependency. It works best in Chrome on the desktop but please report any bugs you may find. Thank you.",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/centaurreader/list.git"
+  },
+  "author": "centaurreader",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/centaurreader/list/issues"
+  },
+  "homepage": "https://github.com/centaurreader/list#readme",
+  "devDependencies": {
+    "babel-loader": "^5.3.2",
+    "css-mqpacker": "^4.0.0",
+    "del": "^2.0.2",
+    "gulp": "^3.9.0",
+    "gulp-cssnano": "^2.0.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-postcss": "^6.0.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.4.2",
+    "gulp-webpack": "^1.5.0",
+    "gulp-webserver": "^0.9.1",
+    "postcss-custom-properties": "^5.0.0",
+    "postcss-import": "^7.1.0",
+    "postcss-media-variables": "^2.0.0"
+  }
+}
