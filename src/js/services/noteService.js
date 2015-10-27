@@ -1,1 +1,2 @@
-import {Note} from "../classes/note";
+import {dataService} from "../services/dataService";
+import {NoteModel} from "../classes/note";

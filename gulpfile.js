@@ -20,15 +20,15 @@ var paths = {
       watch: "src/css/**/*.css"
     },
     html: {
-      main: "src/css/index.html",
-      watch: "src/css/index.html"
+      main: "src/index.html",
+      watch: "src/index.html"
     },
     js: {
       main: "src/js/app.js",
       watch: "src/js/**/*.js"
     }
   },
-  output: paths.output
+  output: "dist/"
 };
 
 
@@ -79,11 +79,17 @@ gulp.task("css-clean", ["clean"], css);
 
 gulp.task("build", ["html-clean", "js-clean", "css-clean"]);
 gulp.task("clean", function () { return plugins.del(paths.output); });
-gulp.task("default", function () {
+gulp.task("default", ["build", "watch"], function () {
   return gulp.src("dist")
     .pipe(plugins.webserver({
       livereload: false,
       directoryListing: false,
       open: true
     }));
+});
+
+gulp.task("watch", function () {
+  gulp.watch(paths.input.css.watch, ["css"]);
+  gulp.watch(paths.input.html.watch, ["html"]);
+  gulp.watch(paths.input.js.watch, ["js"]);
 });

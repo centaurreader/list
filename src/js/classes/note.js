@@ -1,8 +1,8 @@
-class Note {
-  constructor() {
+class NoteModel {
+  constructor(data) {
     this.id = 0;
-    this.text = "";
+    this.note = data.note;
   }
 }
 
-export {Note};
+export {NoteModel};
