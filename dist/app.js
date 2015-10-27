@@ -52,13 +52,22 @@
 
 	var _servicesListService = __webpack_require__(4);
 
-	_servicesDataService.dataService.init();
+	var _modulesInput = __webpack_require__(6);
 
-	var form = document.getElementById("noteForm");
-	form.addEventListener("submit", function (event) {
-	  event.preventDefault();
-	  var note = _servicesNoteService.noteService.addNote();
-	  _servicesListService.listService.addNote("list id goes here", note);
+	var _modulesList = __webpack_require__(7);
+
+	// dataService.init();
+
+	_modulesInput.input.subscribe(function (newNote) {
+	  _servicesNoteService.noteService.newNote({ note: newNote });
+	});
+
+	_servicesNoteService.noteService.subscribe(function (notes) {
+	  _servicesListService.listService.updateLists(notes);
+	});
+
+	_servicesListService.listService.subscribe(function (lists) {
+	  _modulesList.list.updateUi(lists);
 	});
 
 	document.addEventListener("unload", function () {
@@ -77,9 +86,40 @@
 
 	"use strict";
 
-	var _servicesDataService = __webpack_require__(1);
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _classesNote = __webpack_require__(3);
+
+	var notes = [];
+	var subscribers = [];
+
+	function updateSubscribers() {
+	  subscribers.forEach(function (subscriber) {
+	    subscriber(notes);
+	  });
+	}
+	function subscribe(callback) {
+	  subscribers.push(callback);
+	}
+
+	function newNote(note) {
+	  var mappedNote = new _classesNote.NoteModel(note);
+	  addNote(mappedNote);
+	  return mappedNote;
+	}
+
+	function addNote(note) {
+	  notes.push(note);
+	  updateSubscribers();
+	}
+
+	var noteService = {
+	  newNote: newNote,
+	  subscribe: subscribe
+	};
+	exports.noteService = noteService;
 
 /***/ },
 /* 3 */
@@ -108,11 +148,53 @@
 
 	"use strict";
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _servicesDataService = __webpack_require__(1);
 
 	var _classesList = __webpack_require__(5);
 
-	// move listmodel functions here?
+	var lists = [];
+	var subscribers = [];
+	function subscribe(callback) {
+	  subscribers.push(callback);
+	}
+	function updateSubscribers() {
+	  subscribers.forEach(function (subscriber) {
+	    subscriber(lists);
+	  });
+	}
+
+	function resolveNotes(list, newNotes) {
+	  newNotes.forEach(function (newNote) {
+	    var existingNote = list.notes.find(function (note) {
+	      return newNote.id === note.id;
+	    });
+	    if (existingNote) {
+	      existingNote.note = newNote.note;
+	    } else {
+	      list.notes.push(newNote);
+	    }
+	  });
+	};
+
+	function updateLists(notes) {
+	  if (!lists.length) {
+	    lists.push(new _classesList.ListModel({ name: "New list" }));
+	  }
+	  lists.forEach(function (list) {
+	    resolveNotes(list, notes);
+	  });
+	  updateSubscribers();
+	}
+
+	var listService = {
+	  updateLists: updateLists,
+	  subscribe: subscribe
+	};
+	exports.listService = listService;
 
 /***/ },
 /* 5 */
@@ -168,6 +250,85 @@
 	})();
 
 	exports.ListModel = ListModel;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var form = document.getElementById("noteForm");
+
+	var newNote = null;
+
+	var observers = [];
+
+	function updateObservers() {
+	  observers.forEach(function (observer) {
+	    observer(newNote);
+	  });
+	  newNote = null;
+	}
+
+	function subscribe(callback) {
+	  observers.push(callback);
+	}
+
+	form.addEventListener("submit", function (event) {
+	  event.preventDefault();
+	  newNote = event.target[0].value;
+	  updateObservers();
+	  event.target[0].value = "";
+	});
+
+	var input = {
+	  subscribe: subscribe
+	};
+	exports.input = input;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var listContainer = document.getElementById("lists");
+	var subscribers = [];
+	function subscribe(callback) {
+	  subscribers.push(callback);
+	}
+	function updateSubscribers() {
+	  subscribers.forEach(function (subscriber) {
+	    subscriber();
+	  });
+	}
+
+	function updateUi(lists) {
+	  // foreach list get to element by id
+	  // redraw the note templates
+	  lists.forEach(function (list) {
+	    var listName = document.createElement("div");
+	    listName.innerHTML = list.name;
+	    listContainer.appendChild(listName);
+	    list.notes.forEach(function (note) {
+	      var newNote = document.createElement("div");
+	      newNote.innerHTML = note.note;
+	      listContainer.appendChild(newNote);
+	    });
+	  });
+	}
+
+	var list = {
+	  subscribe: subscribe,
+	  updateUi: updateUi
+	};
+	exports.list = list;
 
 /***/ }
 /******/ ]);
